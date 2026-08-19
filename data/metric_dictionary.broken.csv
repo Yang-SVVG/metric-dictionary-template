@@ -1,0 +1,8 @@
+"metric_code","metric_name","domain","definition","formula","source_tables","grain","unit","owner","version","status","updated_at"
+"GMV_Month","月 GMV","经营","按月汇总支付金额","select sum(pay_amount) from f_orders","f_orders,f_unknown_dwd","month","元","张三","1","active","2026-09-01"
+"gmv-order-paid","支付 GMV","经营","支付金额合计","select sum(pay_amount) from f_orders","f_orders","day","元","张三","1","active","2026-09-01"
+"order_cnt_paid","支付订单数","经营","支付订单数量","select count(*) from f_orders","f_orders","day","单","李四","1","published","2026-09-01"
+"net_gmv_order","净 GMV","财务","支付金额减退款","select sum(o.pay_amount) - sum(r.refund_amount) from f_orders o join f_refunds r on r.order_id = o.order_id","f_orders","day","元","王五","1","active","2026-09-01"
+"user_dau_active","日活用户","用户","当日有行为的去重用户数","select count(distinct user_id) from f_user_events","f_user_events","user_day","人","","1","draft","2026-09-01"
+"stock_days_cover","库存可售天数","供应链","库存量除以日均销量","select sum(qty) / avg(daily_sales) from f_sku_stock","","sku_day","天","赵六","1","active","2026-09-01"
+"order_cnt_paid","支付订单数（重复）","经营","重复编码演示","select count(*) from f_orders","f_orders","day","单","李四","1","active","2026-09-01"
