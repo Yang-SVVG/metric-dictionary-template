@@ -1,0 +1,51 @@
+name: validate-dictionary
+
+on:
+  push:
+    paths:
+      - "data/**.csv"
+      - "sql/**.sql"
+      - "scripts/**.py"
+      - "tests/**.py"
+  pull_request:
+    paths:
+      - "data/**.csv"
+      - "sql/**.sql"
+      - "scripts/**.py"
+      - "tests/**.py"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 口径校验（有 error 则失败）
+        run: python scripts/validate_dictionary.py
+
+      - name: 规则单测
+        run: |
+          python -m pip install --quiet pytest openpyxl
+          python -m pytest -q
+
+      - name: 反例集必须失败（防止校验器被改松）
+        run: |
+          if python scripts/validate_dictionary.py --csv data/metric_dictionary.broken.csv; then
+            echo "::error::反例集竟然通过了，校验器被放宽了"
+            exit 1
+          fi
+
+      - name: 生成质量报告
+        run: python scripts/report.py --out build/quality-report.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-report-${{ matrix.python-version }}
+          path: build/quality-report.md
