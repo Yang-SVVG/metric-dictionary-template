@@ -1,6 +1,7 @@
 name: validate-dictionary
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "data/**.csv"
